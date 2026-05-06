@@ -1,0 +1,21 @@
+node_modules/
+dist/
+build/
+coverage/
+.nyc_output/
+.tmp/
+
+# Variables de entorno (no versionar secretos)
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# TypeScript
+*.tsbuildinfo

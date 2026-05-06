@@ -1,0 +1,30 @@
+# Variables de entorno (no versionar secretos)
+.env
+.env.*
+!.env.example
+
+# Dependencias externas
+**/node_modules/
+
+# Artefactos compilados
+**/dist/
+**/build/
+**/.cache/
+**/.next/
+**/.turbo/
+
+# Reportes y temporales
+**/coverage/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Sistema operativo / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Archivos de diseño/locales que no deben versionarse
+*.pen

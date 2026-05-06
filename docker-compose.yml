@@ -1,0 +1,79 @@
+# Variables desde el archivo .env en esta misma carpeta (raíz del repo).
+# Copiá: cp .env.example .env  y completá valores antes de: docker compose up -d
+#
+# Desde el host (API fuera de Docker): 127.0.0.1 + puertos MARIADB_PUBLISHED_PORT, etc.
+# Entre contenedores: hostnames mariadb, mongo, redis en la red fastdelivery_net.
+
+name: fastdelivery
+
+networks:
+  fastdelivery_net:
+    driver: bridge
+
+volumes:
+  mariadb_data:
+  mongo_data:
+  redis_data:
+
+services:
+  mariadb:
+    image: ${MARIADB_IMAGE:-mariadb:11}
+    container_name: ${MARIADB_CONTAINER_NAME:-fastdelivery-mariadb}
+    networks:
+      - fastdelivery_net
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-fastdelivery}
+      MYSQL_USER: ${MYSQL_USER:-fastdelivery}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-fastdelivery}
+    ports:
+      - "${MARIADB_PUBLISHED_PORT:-3306}:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mariadb-admin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD --silent || exit 1",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+
+  mongo:
+    image: ${MONGO_IMAGE:-mongo:7}
+    container_name: ${MONGO_CONTAINER_NAME:-fastdelivery-mongo}
+    networks:
+      - fastdelivery_net
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-fastdelivery}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-fastdelivery}
+    ports:
+      - "${MONGO_PUBLISHED_PORT:-27017}:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mongosh \"mongodb://$$MONGO_INITDB_ROOT_USERNAME:$$MONGO_INITDB_ROOT_PASSWORD@127.0.0.1:27017/admin\" --quiet --eval 'db.runCommand({ ping: 1 }).ok' | grep -q 1",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  # redis:
+  #   image: ${REDIS_IMAGE:-redis:7-alpine}
+  #   container_name: ${REDIS_CONTAINER_NAME:-fastdelivery-redis}
+  #   networks:
+  #     - fastdelivery_net
+  #   ports:
+  #     - "${REDIS_PUBLISHED_PORT:-6379}:6379"
+  #   volumes:
+  #     - redis_data:/data
+  #   command: redis-server --appendonly yes
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 5s
+  #     timeout: 3s
+  #     retries: 20

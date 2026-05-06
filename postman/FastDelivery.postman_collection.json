@@ -1,0 +1,508 @@
+{
+  "info": {
+    "_postman_id": "0d803032-59e3-4f66-bf22-aaf44b6ca70f",
+    "name": "FastDelivery API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "fastdelivery-local"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Admin Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "login"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json && json.access_token) {",
+                  "  pm.environment.set('adminToken', json.access_token);",
+                  "}",
+                  "",
+                  "if (json && json.user && json.user.id) {",
+                  "  pm.environment.set('adminId', String(json.user.id));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Deliverer Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{newDriverEmail}}\",\n  \"password\": \"{{newDriverPassword}}\",\n  \"nombre\": \"{{newDriverName}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/deliverer/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "deliverer",
+                "register"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Deliverer Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{seedUserEmail}}\",\n  \"password\": \"{{seedUserPassword}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/deliverer/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "deliverer",
+                "login"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json && json.access_token) {",
+                  "  pm.environment.set('token', json.access_token);",
+                  "}",
+                  "",
+                  "if (json && json.user && json.user.id) {",
+                  "  pm.environment.set('driverId', String(json.user.id));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Deliverer Login (nuevo repartidor)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{newDriverEmail}}\",\n  \"password\": \"{{newDriverPassword}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/deliverer/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "deliverer",
+                "login"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json && json.access_token) {",
+                  "  pm.environment.set('newDriverToken', json.access_token);",
+                  "}",
+                  "",
+                  "if (json && json.user && json.user.id) {",
+                  "  pm.environment.set('newDriverId', String(json.user.id));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Me (JWT)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders (objetivo del reto)",
+      "item": [
+        {
+          "name": "Listar pedidos por repartidor",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Listar pedidos (nuevo repartidor)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{newDriverToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Listado global (admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders/with-drivers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders",
+                "with-drivers"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Crear pedido (cliente nuevo o existente)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerNombre\": \"{{orderCustomerNombre}}\",\n  \"customerTelefono\": \"{{orderCustomerTelefono}}\",\n  \"customerDireccionEntrega\": \"{{orderCustomerDireccion}}\",\n  \"notasPedido\": \"{{orderNotasPedido}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json && json.id) {",
+                  "  pm.environment.set('orderId', String(json.id));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cambiar estado a EN_CAMINO",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"EN_CAMINO\",\n  \"lat\": 19.4326,\n  \"lng\": -99.1332\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders/{{orderId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders",
+                "{{orderId}}",
+                "status"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cambiar estado a ENTREGADO",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"ENTREGADO\",\n  \"lat\": 19.4328,\n  \"lng\": -99.1329\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders/{{orderId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders",
+                "{{orderId}}",
+                "status"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Detalle de pedido",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders/{{orderId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders",
+                "{{orderId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Historial de pedido",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders/{{orderId}}/history",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders",
+                "{{orderId}}",
+                "history"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/v1"
+    },
+    {
+      "key": "seedUserEmail",
+      "value": "repartidor@fastdelivery.local"
+    },
+    {
+      "key": "seedUserPassword",
+      "value": "RepartidorPassword"
+    },
+    {
+      "key": "adminEmail",
+      "value": "admin@fastdelivery.local"
+    },
+    {
+      "key": "adminPassword",
+      "value": "AdminPassword"
+    },
+    {
+      "key": "adminToken",
+      "value": ""
+    },
+    {
+      "key": "adminId",
+      "value": ""
+    },
+    {
+      "key": "newDriverEmail",
+      "value": "repartidor2@fastdelivery.local"
+    },
+    {
+      "key": "newDriverPassword",
+      "value": "RepartidorPassword"
+    },
+    {
+      "key": "newDriverName",
+      "value": "Repartidor Demo Dos"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "driverId",
+      "value": ""
+    },
+    {
+      "key": "newDriverToken",
+      "value": ""
+    },
+    {
+      "key": "newDriverId",
+      "value": ""
+    },
+    {
+      "key": "orderId",
+      "value": "1"
+    },
+    {
+      "key": "orderCustomerNombre",
+      "value": "Cliente Prueba API"
+    },
+    {
+      "key": "orderCustomerTelefono",
+      "value": "+525551112233"
+    },
+    {
+      "key": "orderCustomerDireccion",
+      "value": "Av. Reforma 100, CDMX"
+    },
+    {
+      "key": "orderNotasPedido",
+      "value": "Pedido creado desde Postman"
+    }
+  ]
+}
